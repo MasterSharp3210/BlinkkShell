@@ -106,9 +106,9 @@ namespace BlinkkShell
             return command switch
             {
                 "whoami" => GetWhoAmIInfo(),
-                "ora" => $"Local Date and Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                "time" => $"Local Date and Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
                 "msg" => ShowMessageBox(args),
-                _ => $"Unknown command: '{command}'. Available commands: whoami, ora, msg <message>, exit"
+                _ => $"Unknown command: '{command}'. Available commands: whoami, time, msg <message>, exit"
             };
         }
 
