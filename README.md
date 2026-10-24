@@ -10,9 +10,10 @@ BlinkkShell is a small TCP client-server application for sending a limited set o
 - Protects access with a password chosen when the server starts.
 - Lets a client connect from another device on the same network or from the server computer itself.
 - Supports the following commands:
+  - `this`: displays the internal shell channel with UUID, PID and gateway info
   - `whoami`: displays the account running the server and, on Windows, whether the process is elevated as an administrator.
-  - `ora`: displays the server computer's local date and time.
   - `msg <text>`: displays a message box on the server computer (Windows only).
+  - `time`: displays the server computer's local date and time.
   - `exit`: closes the current client session without stopping the server.
 - Handles multiple client connections.
 
