@@ -105,10 +105,12 @@ namespace BlinkkShell
 
             return command switch
             {
-                "whoami" => GetWhoAmIInfo(),
-                "time" => $"Local Date and Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
                 "msg" => ShowMessageBox(args),
-                _ => $"Unknown command: '{command}'. Available commands: whoami, time, msg <message>, exit"
+                "time" => $"Local Date and Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                "this" => $"BlinkkShell v.1.0.0 - {Environment.UserName}@{Environment.MachineName} - Remote Channel PID: {Process.GetCurrentProcess().Id}",
+                "whoami" => GetWhoAmIInfo(),
+
+                _ => $"Unknown command: '{command}'. Available commands: this, whoami, msg <message>, time, exit"
             };
         }
 
