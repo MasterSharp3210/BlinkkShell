@@ -50,45 +50,53 @@ namespace BlinkkShell
 
         private async Task HandleClientAsync(TcpClient client)
         {
-            using (client)
-            using (NetworkStream stream = client.GetStream())
-            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-            using (StreamWriter writer = new StreamWriter(stream, new UTF8Encoding(false)) { AutoFlush = true })
+            string clientIp = ((IPEndPoint?)client.Client.RemoteEndPoint)?.Address.ToString() ?? "Unknown";
+            Console.WriteLine($"[+] Client connected | IP: {clientIp}");
+
+            try
             {
-                try
+                using (client)
+                using (NetworkStream stream = client.GetStream())
+                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                using (StreamWriter writer = new StreamWriter(stream, new UTF8Encoding(false)) { AutoFlush = true })
                 {
-                    string? authLine = await reader.ReadLineAsync();
-                    if (authLine == null || !string.Equals(authLine.Trim(), _authPassword, StringComparison.Ordinal))
+                    try
                     {
-                        await writer.WriteLineAsync("AUTH_FAILED");
-                        return;
-                    }
-
-                    await writer.WriteLineAsync("AUTH_SUCCESS");
-
-                    string? inputLine;
-                    while ((inputLine = await reader.ReadLineAsync()) != null)
-                    {
-                        inputLine = inputLine.Trim();
-                        if (string.Equals(inputLine, "exit", StringComparison.OrdinalIgnoreCase))
+                        string? authLine = await reader.ReadLineAsync();
+                        if (authLine == null || !string.Equals(authLine.Trim(), _authPassword, StringComparison.Ordinal))
                         {
-                            await writer.WriteLineAsync("Closing connection...");
-                            break;
+                            await writer.WriteLineAsync("AUTH_FAILED");
+                            return;
                         }
 
-                        string response = ShellHandles.ProcessCommand(inputLine);
-                        await writer.WriteLineAsync(response);
-                        await writer.WriteLineAsync("<END_OF_RESPONSE>");
+                        await writer.WriteLineAsync("AUTH_SUCCESS");
+
+                        string? inputLine;
+                        while ((inputLine = await reader.ReadLineAsync()) != null)
+                        {
+                            inputLine = inputLine.Trim();
+                            if (string.Equals(inputLine, "exit", StringComparison.OrdinalIgnoreCase))
+                            {
+                                await writer.WriteLineAsync("Closing connection...");
+                                break;
+                            }
+
+                            string response = ShellHandles.ProcessCommand(inputLine);
+                            await writer.WriteLineAsync(response);
+                            await writer.WriteLineAsync("<END_OF_RESPONSE>");
+                        }
+                    }
+                    catch (IOException)
+                    {
+                    }
+                    catch (SocketException)
+                    {
                     }
                 }
-                catch (IOException exception)
-                {
-                    Console.Error.WriteLine($"Client connection error: {exception.Message}");
-                }
-                catch (SocketException exception)
-                {
-                    Console.Error.WriteLine($"Client socket error: {exception.Message}");
-                }
+            }
+            finally
+            {
+                Console.WriteLine($"[-] Client disconnected | IP: {clientIp}");
             }
         }
 

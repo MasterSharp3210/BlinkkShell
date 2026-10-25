@@ -34,7 +34,7 @@ namespace BlinkkShell
 
         private static string GetShellInfo()
         {
-            return $"BlinkkShell v.1.0.0 - {Environment.UserName}@{Environment.MachineName} - Remote Channel PID: {Process.GetCurrentProcess().Id}";
+            return $"BlinkkShell v.1.0.5 - {Environment.UserName}@{Environment.MachineName} - Remote Channel PID: {Process.GetCurrentProcess().Id}";
         }
 
         private static string GetWhoAmIInfo()
@@ -61,7 +61,11 @@ namespace BlinkkShell
             string encodedMessage = Convert.ToBase64String(Encoding.UTF8.GetBytes(message));
             string script = "$message = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" +
                 encodedMessage +
-                "')); Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show($message, 'BlinkkShell Message')";
+                "')); Add-Type -AssemblyName System.Windows.Forms; " +
+                "$form = New-Object System.Windows.Forms.Form; " +
+                "$form.TopMost = $true; " +
+                "[System.Windows.Forms.MessageBox]::Show($form, $message, 'BlinkkShell Message', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information); " +
+                "$form.Dispose();";
 
             try
             {
@@ -76,8 +80,7 @@ namespace BlinkkShell
             }
             catch (Exception exception) when (exception is InvalidOperationException or System.ComponentModel.Win32Exception)
             {
-                Console.Error.WriteLine($"Unable to display the message: {exception.Message}");
-                return "Failed to display the message.";
+                return $"Failed to display the message: {exception.Message}";
             }
         }
     }

@@ -112,7 +112,8 @@ The client hides password input when running in an interactive terminal.
 .
 ├── BlinkkShell.csproj             # .NET server project
 ├── Program.cs                     # Startup, password prompt, and network addresses
-├── RemoteShell.cs                 # TCP listener, authentication, and commands
+├── RemoteShell.cs                 # TCP listener, authentication, and client sessions
+├── ShellHandles.cs                 # Supported command dispatch and implementations
 └── Sender/
     └── BlinkkShell/
         ├── Cargo.toml             # Rust client project

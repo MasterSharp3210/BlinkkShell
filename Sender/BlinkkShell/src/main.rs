@@ -46,7 +46,7 @@ fn run() -> io::Result<()> {
         eprintln!("Unable to enable terminal colors: {error}");
     }
 
-    println!("{}", "=== BlinkkShell Client v1.0.0 ===".cyan().bold());
+    println!("{}", "=== BlinkkShell Client v1.0.5 ===".cyan().bold());
 
     print!(
         "{} ",

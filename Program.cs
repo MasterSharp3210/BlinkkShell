@@ -20,14 +20,13 @@ namespace BlinkkShell
                 return;
             }
 
-            Console.WriteLine($"BlinkkShell Server v1.0.0 - {Environment.OSVersion}");
+            Console.WriteLine($"BlinkkShell Server v1.0.5 - {Environment.OSVersion}");
             Console.WriteLine($"Process ID: {Process.GetCurrentProcess().Id}");
 
             RemoteShell shell = new RemoteShell(port, authPassword);
             Task serverTask = shell.StartAsync();
-            Task inputTask = Task.Run(Console.ReadLine);
+            Task inputTask = Task.Run(Console.ReadKey);
 
-            Console.WriteLine($"Connect locally to 127.0.0.1:{port}.");
             IPAddress[] addresses = GetLocalIPv4Addresses();
             if (addresses.Length == 0)
             {
@@ -35,13 +34,11 @@ namespace BlinkkShell
             }
             else
             {
-                Console.WriteLine("Connect from another device on the same network using one of these addresses:");
+                Console.WriteLine("Available local IPv4 network addresses:");
                 foreach (IPAddress address in addresses)
                     Console.WriteLine($"  {address}:{port}");
             }
 
-            Console.WriteLine("If remote connections fail, allow inbound TCP port 8020 in Windows Firewall on a trusted private network.");
-            Console.WriteLine("PowerShell command (run as Administrator): New-NetFirewallRule -DisplayName \"BlinkkShell\" -Direction Inbound -Protocol TCP -LocalPort 8020 -Action Allow -Profile Private");
             Console.WriteLine("Press ENTER to stop the server.");
 
             if (await Task.WhenAny(serverTask, inputTask) == inputTask)

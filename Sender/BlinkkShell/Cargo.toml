@@ -5,4 +5,4 @@ edition = "2024"
 
 [dependencies]
 rpassword = "7.3"
-simpled_rlang = { path = "./simpled_rlang" }
+simpled_rlang = { path = "./extra_recipe" }
