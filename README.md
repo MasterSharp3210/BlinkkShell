@@ -10,9 +10,14 @@ BlinkkShell is a small TCP client-server application for sending a limited set o
 - Protects access with a password chosen when the server starts.
 - Lets a client connect from another device on the same network or from the server computer itself.
 - Supports the following commands:
-  - `this`: displays the internal shell channel with UUID, PID and gateway info
+  - `help`: displays the available commands and their descriptions.
+  - `this`: displays BlinkkShell version, computer, account and process ID.
+  - `sysinfo`: displays operating system, architecture, processor count and .NET runtime information.
   - `whoami`: displays the account running the server and, on Windows, whether the process is elevated as an administrator.
   - `msg <text>`: displays a message box on the server computer (Windows only).
+  - `ping`: checks that the server responds.
+  - `shelluptime`: displays how long the BlinkkShell process has been running.
+  - `uptime`: displays how long the computer has been running.
   - `time`: displays the server computer's local date and time.
   - `exit`: closes the current client session without stopping the server.
 - Handles multiple client connections.
@@ -90,12 +95,18 @@ Avoid creating a broader rule or allowing traffic on public network profiles unl
 
 | Command | Effect |
 | --- | --- |
+| `help` | Lists available commands and describes their effects. |
+| `this` | Displays the BlinkkShell version, server computer, account and process ID. |
+| `sysinfo` | Displays operating system, OS and process architectures, logical processor count and .NET runtime. |
 | `whoami` | Returns the user and domain of the server account. On Windows, also reports whether the server is running as an administrator. |
+| `uptime` | Returns how long the server computer has been running. |
+| `shelluptime` | Returns how long the BlinkkShell process has been running; it resets when the server process restarts. |
 | `time` | Returns the server's local date and time in `yyyy-MM-dd HH:mm:ss` format. |
+| `ping` | Returns `Ping Pong!` to confirm the server responds. |
 | `msg <text>` | Opens a message box with the specified text on the server. Windows only; provide text after the command. |
 | `exit` | Closes the current connection. The server keeps running. |
 
-Commands are case-insensitive. `msg` accepts the text following the command name; the text is passed to PowerShell as encoded data, not as a PowerShell command to execute.
+Commands are case-insensitive. `uptime` reports the computer's uptime, while `shelluptime` reports the BlinkkShell process uptime. `msg` accepts the text following the command name; the text is passed to PowerShell as encoded data, not as a PowerShell command to execute.
 
 ## How it works
 
@@ -136,4 +147,4 @@ The client hides password input when running in an interactive terminal.
 - **Authentication failed:** Enter the exact password configured when the server started.
 - **Port already in use:** Stop the other process listening on port `8020` before starting BlinkkShell.
 - **`msg` does not display a window:** This command is available only on Windows and displays the message on the server computer, not the client.
-- **Unknown command:** Only `whoami`, `time`, `msg <text>`, and `exit` are supported.
+- **Unknown command:** Run `help` to see the supported commands.
