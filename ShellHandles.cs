@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 
@@ -6,8 +7,6 @@ namespace BlinkkShell
 {
     internal static class ShellHandles
     {
-        private const string AvailableCommands = "this, whoami, msg <message>, time, exit";
-
         public static string ProcessCommand(string commandLine)
         {
             if (string.IsNullOrWhiteSpace(commandLine))
@@ -19,12 +18,37 @@ namespace BlinkkShell
 
             return command switch
             {
-                "msg" => ShowMessageBox(args),
-                "time" => GetLocalTime(),
+                "help" => GetHelpText(),
                 "this" => GetShellInfo(),
                 "whoami" => GetWhoAmIInfo(),
-                _ => $"Unknown command: '{command}'. Available commands: {AvailableCommands}"
+                "msg" => ShowMessageBox(args),
+                "ping" => "Ping Pong!",
+                "shelluptime" => $"Shell Uptime: {DateTime.Now - Process.GetCurrentProcess().StartTime}",
+                "sysinfo" => GetSystemInfo(),
+                "time" => GetLocalTime(),
+                "uptime" => $"System Uptime: {TimeSpan.FromMilliseconds(Environment.TickCount64)}",
+                _ => $"Unknown command: '{command}'. Type 'help' to see the available commands."
             };
+        }
+
+        private static string GetHelpText()
+        {
+            return """
+                BlinkkShell commands
+                ====================
+                  help           Show this command list.
+                  this           Show BlinkkShell server and process details.
+                  sysinfo        Show operating system and runtime details.
+                  whoami         Show the server account and administrator status.
+                  uptime         Show how long the computer has been running.
+                  shelluptime    Show how long the BlinkkShell process has been running.
+                  time           Show the server's local date and time.
+                  ping           Check that the server responds.
+                  msg <text>     Display a message on the server (Windows only).
+                  exit           Close this client session.
+
+                Commands are case-insensitive.
+                """;
         }
 
         private static string GetLocalTime()
@@ -34,7 +58,29 @@ namespace BlinkkShell
 
         private static string GetShellInfo()
         {
-            return $"BlinkkShell v.1.0.5 - {Environment.UserName}@{Environment.MachineName} - Remote Channel PID: {Process.GetCurrentProcess().Id}";
+            Process currentProcess = Process.GetCurrentProcess();
+            return $"""
+                BlinkkShell Channel
+                =================
+                  Version     : 1.0.5
+                  Computer    : {Environment.MachineName}
+                  Account     : {Environment.UserName}
+                  Process ID  : {currentProcess.Id}
+                """;
+        }
+
+        private static string GetSystemInfo()
+        {
+            return $"""
+                System information
+                ==================
+                  {"Computer",-21}: {Environment.MachineName}
+                  {"Operating system",-21}: {RuntimeInformation.OSDescription}
+                  {"OS architecture",-21}: {RuntimeInformation.OSArchitecture}
+                  {"Process architecture",-21}: {RuntimeInformation.ProcessArchitecture}
+                  {"Logical processors",-21}: {Environment.ProcessorCount}
+                  {".NET runtime",-21}: {RuntimeInformation.FrameworkDescription}
+                """;
         }
 
         private static string GetWhoAmIInfo()
