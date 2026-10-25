@@ -91,7 +91,7 @@ Avoid creating a broader rule or allowing traffic on public network profiles unl
 | Command | Effect |
 | --- | --- |
 | `whoami` | Returns the user and domain of the server account. On Windows, also reports whether the server is running as an administrator. |
-| `ora` | Returns the server's local date and time in `yyyy-MM-dd HH:mm:ss` format. |
+| `time` | Returns the server's local date and time in `yyyy-MM-dd HH:mm:ss` format. |
 | `msg <text>` | Opens a message box with the specified text on the server. Windows only; provide text after the command. |
 | `exit` | Closes the current connection. The server keeps running. |
 
@@ -135,4 +135,4 @@ The client hides password input when running in an interactive terminal.
 - **Authentication failed:** Enter the exact password configured when the server started.
 - **Port already in use:** Stop the other process listening on port `8020` before starting BlinkkShell.
 - **`msg` does not display a window:** This command is available only on Windows and displays the message on the server computer, not the client.
-- **Unknown command:** Only `whoami`, `ora`, `msg <text>`, and `exit` are supported.
+- **Unknown command:** Only `whoami`, `time`, `msg <text>`, and `exit` are supported.
