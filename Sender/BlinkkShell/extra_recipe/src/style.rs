@@ -113,6 +113,8 @@ impl Styled {
     }
 
     pub fn render(&self) -> String {
+        crate::win_console::init_window_colors();
+
         if self.codes.is_empty() {
             return self.text.clone();
         }
