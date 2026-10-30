@@ -1,38 +1,8 @@
 use std::io::{self, BufRead, BufReader, IsTerminal, Write};
 use std::net::TcpStream;
+use std::time::Instant;
 
 use simpled_rlang::prelude::*;
-
-#[cfg(windows)]
-#[link(name = "kernel32")]
-unsafe extern "system" {
-    fn GetStdHandle(n_std_handle: u32) -> *mut std::ffi::c_void;
-    fn GetConsoleMode(handle: *mut std::ffi::c_void, mode: *mut u32) -> i32;
-    fn SetConsoleMode(handle: *mut std::ffi::c_void, mode: u32) -> i32;
-}
-
-fn enable_terminal_colors() -> io::Result<()> {
-    #[cfg(windows)]
-    if io::stdout().is_terminal() {
-        unsafe {
-            let handle = GetStdHandle((-11i32) as u32);
-            if handle.is_null() || handle as isize == -1 {
-                return Err(io::Error::last_os_error());
-            }
-
-            let mut mode = 0;
-            if GetConsoleMode(handle, &mut mode) == 0 {
-                return Err(io::Error::last_os_error());
-            }
-
-            if SetConsoleMode(handle, mode | 0x0004) == 0 {
-                return Err(io::Error::last_os_error());
-            }
-        }
-    }
-
-    Ok(())
-}
 
 fn main() {
     if let Err(error) = run() {
@@ -42,9 +12,6 @@ fn main() {
 }
 
 fn run() -> io::Result<()> {
-    if let Err(error) = enable_terminal_colors() {
-        eprintln!("Unable to enable terminal colors: {error}");
-    }
 
     println!("{}", "=== BlinkkShell Client v1.0.5 ===".cyan().bold());
 
@@ -54,9 +21,10 @@ fn run() -> io::Result<()> {
             .yellow()
     );
     io::stdout().flush()?;
-    let mut address = String::new();
-    io::stdin().read_line(&mut address)?;
+    
+    let address = read();
     let address = address.trim();
+    
     if address.is_empty() {
         eprintln!("{}", "A connection address is required.".red());
         wait_for_exit_if_interactive();
@@ -121,15 +89,15 @@ fn run() -> io::Result<()> {
         print!("{} ", "BlinkkShell > ".green().bold());
         io::stdout().flush()?;
 
-        let mut command = String::new();
-        if io::stdin().read_line(&mut command)? == 0 {
-            break;
-        }
+        let command = read();
         let command = command.trim();
 
         if command.is_empty() {
             continue;
         }
+
+        let is_ping = command.eq_ignore_ascii_case("ping");
+        let ping_start = is_ping.then(Instant::now);
 
         writeln!(stream, "{command}")?;
 
@@ -152,6 +120,13 @@ fn run() -> io::Result<()> {
 
             print!("{line}");
         }
+
+        if let Some(start) = ping_start {
+            println!(
+                "Ping: {:.2} ms",
+                start.elapsed().as_secs_f64() * 1_000.0
+            );
+        }
     }
 
     Ok(())
@@ -164,18 +139,15 @@ fn read_password() -> io::Result<String> {
 
     print!("Enter password: ");
     io::stdout().flush()?;
-    let mut password = String::new();
-    if io::stdin().read_line(&mut password)? == 0 {
+    
+    let password = read();
+    let mut password = password.trim_end_matches(&['\r', '\n'][..]).to_string();
+    
+    if password.is_empty() {
         return Err(io::Error::new(
             io::ErrorKind::UnexpectedEof,
             "password input ended",
         ));
-    }
-    if password.ends_with('\n') {
-        password.pop();
-        if password.ends_with('\r') {
-            password.pop();
-        }
     }
     Ok(password)
 }
@@ -183,7 +155,6 @@ fn read_password() -> io::Result<String> {
 fn wait_for_exit_if_interactive() {
     if io::stdin().is_terminal() {
         println!("Press ENTER to close.");
-        let mut input = String::new();
-        let _ = io::stdin().read_line(&mut input);
+        let _ = read();
     }
 }

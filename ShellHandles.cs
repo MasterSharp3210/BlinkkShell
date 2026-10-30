@@ -21,8 +21,9 @@ namespace BlinkkShell
                 "help" => GetHelpText(),
                 "this" => GetShellInfo(),
                 "whoami" => GetWhoAmIInfo(),
+                "cmdmsg" => ShowConsoleMessage(args),
                 "msg" => ShowMessageBox(args),
-                "ping" => "Ping Pong!",
+                "ping" => "Pong!",
                 "shelluptime" => $"Shell Uptime: {DateTime.Now - Process.GetCurrentProcess().StartTime}",
                 "sysinfo" => GetSystemInfo(),
                 "time" => GetLocalTime(),
@@ -44,6 +45,7 @@ namespace BlinkkShell
                   shelluptime    Show how long the BlinkkShell process has been running.
                   time           Show the server's local date and time.
                   ping           Check that the server responds.
+                  cmdmsg <text>  Display a message on the server console.
                   msg <text>     Display a message on the server (Windows only).
                   exit           Close this client session.
 
@@ -95,6 +97,14 @@ namespace BlinkkShell
             bool isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
             string adminStatus = isAdmin ? "YES (Administrator / Elevated)" : "NO (Standard User)";
             return $"Current User: {domain}\\{username}\nAdmin Mode: {adminStatus}";
+        }
+
+        private static string ShowConsoleMessage(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return "Usage: consolemsg <message_text>";
+            Console.WriteLine($"Remote message: {message}");
+            return "Message displayed on server console.";
         }
 
         private static string ShowMessageBox(string message)
