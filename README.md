@@ -104,6 +104,7 @@ Avoid creating a broader rule or allowing traffic on public network profiles unl
 | `shelluptime` | Returns how long the BlinkkShell process has been running; it resets when the server process restarts. |
 | `time` | Returns the server's local date and time in `yyyy-MM-dd HH:mm:ss` format. |
 | `ping` | Returns `Ping Pong!` to confirm the server responds. |
+| `cmdmsg <text>` | Write the remote message on the BlinkkShell server console. |
 | `msg <text>` | Opens a message box with the specified text on the server. Windows only; provide text after the command. |
 | `exit` | Closes the current connection. The server keeps running. |
 
