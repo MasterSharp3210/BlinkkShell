@@ -14,6 +14,7 @@ BlinkkShell is a small TCP client-server application for sending a limited set o
   - `this`: displays BlinkkShell version, computer, account and process ID.
   - `sysinfo`: displays operating system, architecture, processor count and .NET runtime information.
   - `whoami`: displays the account running the server and, on Windows, whether the process is elevated as an administrator.
+  - `cmdmsg <text>`: displays a message on the server console.
   - `msg <text>`: displays a message box on the server computer (Windows only).
   - `ping`: checks that the server responds.
   - `shelluptime`: displays how long the BlinkkShell process has been running.
