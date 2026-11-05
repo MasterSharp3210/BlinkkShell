@@ -23,6 +23,8 @@ namespace BlinkkShell
             Console.WriteLine($"BlinkkShell Server v1.0.5 - {Environment.OSVersion}");
             Console.WriteLine($"Process ID: {Process.GetCurrentProcess().Id}");
 
+            Console.WriteLine("Channel 1 running... / Main Shell");
+
             RemoteShell shell = new RemoteShell(port, authPassword);
             Task serverTask = shell.StartAsync();
             Task inputTask = Task.Run(Console.ReadKey);
