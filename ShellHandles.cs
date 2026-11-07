@@ -24,6 +24,8 @@ namespace BlinkkShell
                 "cmdmsg" => ShowConsoleMessage(args),
                 "msg" => ShowMessageBox(args),
                 "ping" => "Pong!",
+                "procs" => GetProcessList(),
+                "kill" => KillProcess(args),
                 "shelluptime" => $"Shell Uptime: {DateTime.Now - Process.GetCurrentProcess().StartTime}",
                 "sysinfo" => GetSystemInfo(),
                 "time" => GetLocalTime(),
@@ -45,6 +47,7 @@ namespace BlinkkShell
                   shelluptime    Show how long the BlinkkShell process has been running.
                   time           Show the server's local date and time.
                   ping           Check that the server responds.
+                  procs          Show a list of running processes on the server.
                   cmdmsg <text>  Display a message on the server console.
                   msg <text>     Display a message on the server (Windows only).
                   exit           Close this client session.
@@ -58,13 +61,68 @@ namespace BlinkkShell
             return $"Local Date and Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}";
         }
 
+        private static string GetProcessList()
+        {
+            Process[] processes = Process.GetProcesses();
+            StringBuilder processList = new StringBuilder("Running Processes:\n==================\n");
+            foreach (Process process in processes)
+            {
+                try
+                {
+                    processList.AppendLine($"  {process.ProcessName} (ID: {process.Id})");
+                }
+                catch
+                {
+                    // Ignore processes that cannot be accessed
+                }
+            }
+            return processList.ToString();
+        }
+
+        private static string KillProcess(string processIdStr)
+        {
+            if (!OperatingSystem.IsWindows())
+                return "The kill command is only available on Windows.";
+            using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+
+            if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+                return "Permission denied. You must run the server as an administrator to terminate processes.";
+
+            if (!int.TryParse(processIdStr, out int processId) || processId <= 0)
+                return "Invalid process ID. Usage: kill <process_id>";
+
+            try
+            {
+                using Process process = Process.GetProcessById(processId);
+
+                string processName = process.ProcessName;
+
+                process.Kill();
+
+                return $"Process {processName} (PID: {processId}) has been terminated.";
+            }
+            catch (ArgumentException)
+            {
+                return $"No process with ID {processId} was found.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                return $"Process {processId} could not be terminated: {ex.Message}";
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                return $"Access denied or failed to terminate process {processId}: {ex.Message}";
+            }
+        }
+
         private static string GetShellInfo()
         {
             Process currentProcess = Process.GetCurrentProcess();
             return $"""
                 BlinkkShell Channel
                 =================
-                  Version     : 1.0.5
+                  Version     : 1.1.5
                   Computer    : {Environment.MachineName}
                   Account     : {Environment.UserName}
                   Process ID  : {currentProcess.Id}
