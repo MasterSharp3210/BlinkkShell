@@ -17,6 +17,8 @@ BlinkkShell is a small TCP client-server application for sending a limited set o
   - `cmdmsg <text>`: displays a message on the server console.
   - `msg <text>`: displays a message box on the server computer (Windows only).
   - `ping`: checks that the server responds.
+  - `procs`: Show a list of running processes on the server.
+  - `kill <pid>`: Kill a process running on the server.
   - `shelluptime`: displays how long the BlinkkShell process has been running.
   - `uptime`: displays how long the computer has been running.
   - `time`: displays the server computer's local date and time.
@@ -27,7 +29,7 @@ BlinkkShell is a small TCP client-server application for sending a limited set o
 
 - **.NET SDK 10** to build and run the server.
 - **Rust and Cargo** to build and run the client.
-- Windows is required for the `msg` command and to report administrator elevation. The server and client can be built on other platforms, but these features are Windows-specific.
+- Windows is required for the `msg - procs - kill` command and to report administrator elevation. The server and client can be built on other platforms, but these features are Windows-specific.
 - For connections from another device, both computers must be able to communicate over the network, and the server's firewall must allow inbound TCP connections on port `8020`.
 
 ## Run in development mode
@@ -104,6 +106,8 @@ Avoid creating a broader rule or allowing traffic on public network profiles unl
 | `shelluptime` | Returns how long the BlinkkShell process has been running; it resets when the server process restarts. |
 | `time` | Returns the server's local date and time in `yyyy-MM-dd HH:mm:ss` format. |
 | `ping` | Returns `Ping Pong!` to confirm the server responds. |
+| `procs`: Show a list of running processes on the server. |
+| `kill <pid>`: Kill a process running on the server. |
 | `cmdmsg <text>` | Write the remote message on the BlinkkShell server console. |
 | `msg <text>` | Opens a message box with the specified text on the server. Windows only; provide text after the command. |
 | `exit` | Closes the current connection. The server keeps running. |
