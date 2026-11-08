@@ -17,9 +17,10 @@ BlinkkShell is a small TCP client-server application for sending a limited set o
   - `cmdmsg <text>`: displays a message on the server console.
   - `msg <text>`: displays a message box on the server computer (Windows only).
   - `ping`: checks that the server responds.
-  - `procs`: Show a list of running processes on the server.
-  - `kill <pid>`: Kill a process running on the server.
+  - `procs`: show a list of running processes on the server.
+  - `kill <pid>`: kill a process running on the server.
   - `shelluptime`: displays how long the BlinkkShell process has been running.
+  - `start <proc>`: start a process on the server.
   - `uptime`: displays how long the computer has been running.
   - `time`: displays the server computer's local date and time.
   - `exit`: closes the current client session without stopping the server.
@@ -29,7 +30,7 @@ BlinkkShell is a small TCP client-server application for sending a limited set o
 
 - **.NET SDK 10** to build and run the server.
 - **Rust and Cargo** to build and run the client.
-- Windows is required for the `msg - procs - kill` command and to report administrator elevation. The server and client can be built on other platforms, but these features are Windows-specific.
+- Windows is required for the `msg - procs - kill - start` command and to report administrator elevation. The server and client can be built on other platforms, but these features are Windows-specific.
 - For connections from another device, both computers must be able to communicate over the network, and the server's firewall must allow inbound TCP connections on port `8020`.
 
 ## Run in development mode
@@ -104,6 +105,7 @@ Avoid creating a broader rule or allowing traffic on public network profiles unl
 | `whoami` | Returns the user and domain of the server account. On Windows, also reports whether the server is running as an administrator. |
 | `uptime` | Returns how long the server computer has been running. |
 | `shelluptime` | Returns how long the BlinkkShell process has been running; it resets when the server process restarts. |
+| `start <proc>` | Start a process app on the BlinkkShell server. |
 | `time` | Returns the server's local date and time in `yyyy-MM-dd HH:mm:ss` format. |
 | `ping` | Returns `Ping Pong!` to confirm the server responds. |
 | `procs`: Show a list of running processes on the server. |

@@ -20,10 +20,10 @@ namespace BlinkkShell
                 return;
             }
 
-            Console.WriteLine($"BlinkkShell Server v1.1.5 - {Environment.OSVersion}");
+            Console.WriteLine($"BlinkkShell Server v1.2.0 - {Environment.OSVersion}");
             Console.WriteLine($"Process ID: {Process.GetCurrentProcess().Id}");
 
-            Console.WriteLine("Channel 1 running... / Main Shell");
+            Console.WriteLine("Streaming Channel 1 - Main Shell");
 
             RemoteShell shell = new RemoteShell(port, authPassword);
             Task serverTask = shell.StartAsync();

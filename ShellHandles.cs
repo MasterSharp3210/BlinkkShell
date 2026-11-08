@@ -27,6 +27,7 @@ namespace BlinkkShell
                 "procs" => GetProcessList(),
                 "kill" => KillProcess(args),
                 "shelluptime" => $"Shell Uptime: {DateTime.Now - Process.GetCurrentProcess().StartTime}",
+                "start" => StartProcess(args),
                 "sysinfo" => GetSystemInfo(),
                 "time" => GetLocalTime(),
                 "uptime" => $"System Uptime: {TimeSpan.FromMilliseconds(Environment.TickCount64)}",
@@ -46,8 +47,10 @@ namespace BlinkkShell
                   uptime         Show how long the computer has been running.
                   shelluptime    Show how long the BlinkkShell process has been running.
                   time           Show the server's local date and time.
+                  start <proc>   Start a new process on the server (Windows only).
                   ping           Check that the server responds.
                   procs          Show a list of running processes on the server.
+                  kill <pid>     Terminate a process by its ID (Windows only, requires admin).
                   cmdmsg <text>  Display a message on the server console.
                   msg <text>     Display a message on the server (Windows only).
                   exit           Close this client session.
@@ -122,7 +125,7 @@ namespace BlinkkShell
             return $"""
                 BlinkkShell Channel
                 =================
-                  Version     : 1.1.5
+                  Version     : 1.2.0
                   Computer    : {Environment.MachineName}
                   Account     : {Environment.UserName}
                   Process ID  : {currentProcess.Id}
@@ -195,6 +198,31 @@ namespace BlinkkShell
             catch (Exception exception) when (exception is InvalidOperationException or System.ComponentModel.Win32Exception)
             {
                 return $"Failed to display the message: {exception.Message}";
+            }
+        }
+
+        private static string StartProcess(string processName)
+        {
+            if (!OperatingSystem.IsWindows())
+                return "The start command is only available on Windows.";
+
+            if (string.IsNullOrWhiteSpace(processName))
+                return "Usage: start <process>";
+
+            try
+            {
+                using Process? process = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    ArgumentList = { "/C", processName },
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                });
+                return process == null ? "Failed to start the process." : $"Process started with ID: {process.Id}";
+            }
+            catch (Exception exception) when (exception is InvalidOperationException or System.ComponentModel.Win32Exception)
+            {
+                return $"Failed to start the process: {exception.Message}";
             }
         }
     }
